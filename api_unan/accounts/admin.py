@@ -11,13 +11,13 @@ class AccountAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('account', 'career', 'year_in_course', 'student_id')
-    search_fields = ('account', 'career', 'year_in_course', 'student_id')
+    list_display = ('career', 'year_in_course', 'student_id')
+    search_fields = ('career', 'year_in_course', 'student_id')
     list_filter = ('career', 'year_in_course')
 
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('account', 'career', 'teacher_id')
-    search_fields = ('account', 'career', 'teacher_id')
-    list_filter = ('career',)
+    list_display = ('specialization', 'teacher_id')
+    search_fields = ('specialization', 'teacher_id')
+    list_filter = ('specialization',)
