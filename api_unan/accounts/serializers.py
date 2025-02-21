@@ -1,5 +1,8 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 from .models import Account, Student, Teacher
 
@@ -7,7 +10,23 @@ from .models import Account, Student, Teacher
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Account
-        fields = ['url', 'email', 'username', 'first_name', 'last_name']
+        fields = ['url', 'email', 'username', 'first_name', 'last_name', 'password', 'telephone', 'description']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        user.is_active = True
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+            validated_data.pop('password')
+        return super().update(instance, validated_data)
 
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):

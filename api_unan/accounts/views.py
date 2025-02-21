@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 
 from .models import Account, Student, Teacher
 from .serializers import AccountSerializer, GroupSerializer, StudentSerializer, TeacherSerializer
+from .permissions import IsAdminToDelete
 
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -11,7 +12,14 @@ class AccountViewSet(viewsets.ModelViewSet):
     """
     queryset = Account.objects.all().order_by('-date_joined')
     serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdminToDelete]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return Account.objects.all().order_by('-date_joined')
+        return Account.objects.filter(id=user.id).order_by('-date_joined')
+
 
 
 class StudentViewSet(viewsets.ModelViewSet):
