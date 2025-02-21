@@ -14,6 +14,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ('career', 'year_in_course', 'student_id')
     search_fields = ('career', 'year_in_course', 'student_id')
     list_filter = ('career', 'year_in_course')
+    raw_id_fields = ['account']
 
 
 @admin.register(Teacher)
@@ -21,3 +22,4 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ('specialization', 'teacher_id')
     search_fields = ('specialization', 'teacher_id')
     list_filter = ('specialization',)
+    raw_id_fields = ['account']

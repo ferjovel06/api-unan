@@ -47,7 +47,7 @@ class Account(AbstractBaseUser):
     username = models.CharField('Nombre de Usuario', max_length=50, unique=True)
     email = models.EmailField('Correo Electronico', max_length=100, unique=True)
     telephone = models.CharField('Telefono', max_length=15)
-    description = models.TextField('Descripcion', max_length=500)
+    description = models.TextField('Descripcion', max_length=500, null=True, blank=True)
 
     # Atributos de django
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -81,7 +81,7 @@ class Student(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.account.email
+        return f"{self.account.first_name} {self.account.last_name} - Estudiante"
 
 
 class Teacher(models.Model):
@@ -92,4 +92,4 @@ class Teacher(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.account.email
+        return f"{self.account.first_name} {self.account.last_name} - Docente"
