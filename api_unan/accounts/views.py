@@ -16,10 +16,9 @@ class AccountViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.is_superuser:
+        if user.is_admin or user.is_teacher:
             return Account.objects.all().order_by('-date_joined')
         return Account.objects.filter(id=user.id).order_by('-date_joined')
-
 
 
 class StudentViewSet(viewsets.ModelViewSet):

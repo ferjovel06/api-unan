@@ -17,8 +17,8 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        user.is_active = True
         user.set_password(validated_data['password'])
+        user.is_active = True
         user.save()
         return user
 
@@ -39,6 +39,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         account_data = validated_data.pop('account')
         account = Account.objects.create(**account_data)
+        account.is_student = True
         student = Student.objects.create(account=account, **validated_data)
         return student
 
@@ -54,6 +55,7 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
         account_data = validated_data.pop('account')
         account = Account.objects.create(**account_data)
         teacher = Teacher.objects.create(account=account, **validated_data)
+        account.is_teacher = True
         return teacher
 
 
