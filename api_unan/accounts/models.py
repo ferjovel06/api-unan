@@ -4,11 +4,14 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, email, telephone, username, description, password):
+    def create_user(self, first_name, last_name, email, telephone, username, description, password, is_student=False, is_teacher=False):
         if not email:
-            raise ValueError('El usuario debe tener un correo electronico')
+            raise ValidationError('El usuario debe tener un correo electronico')
         if not username:
-            raise ValueError('El usuario debe tener un nombre de usuario')
+            raise ValidationError('El usuario debe tener un nombre de usuario')
+
+        if is_student and is_teacher:
+            raise ValidationError('Un usuario no puede ser estudiante y docente al mismo tiempo')
 
         user = self.model(
             email=self.normalize_email(email),
@@ -86,7 +89,7 @@ class Student(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='student_profile')
     career = models.CharField('Carrera', max_length=50)
     year_in_course = models.IntegerField('Año en Curso', default=1)
-    student_id = models.CharField('Carnet de Estudiante', max_length=50)
+    student_id = models.CharField('Carnet de Estudiante', max_length=50, unique=True)
 
     objects = models.Manager()
 
@@ -105,7 +108,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='teacher_profile')
     specialization = models.CharField('Especialidad', max_length=50)
-    teacher_id = models.CharField('Carnet de Docente', max_length=50)
+    teacher_id = models.CharField('Carnet de Docente', max_length=50, unique=True)
 
     objects = models.Manager()
 
