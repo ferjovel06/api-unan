@@ -29,13 +29,26 @@ class AccountViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated, IsStudent]
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:  # Permitir GET a estudiantes y maestros
+            permission_classes = [IsAuthenticated]
+        else:  # Para PUT, POST, DELETE, solo los estudiantes pueden modificar su perfil
+            permission_classes = [IsAuthenticated, IsStudent]
+        return [permission() for permission in permission_classes]
+
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
-    permission_classes = [IsAuthenticated, IsTeacher]
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:  # Permitir GET sin autenticación
+            permission_classes = []  # Acceso libre a todos
+        else:  # Para POST, PUT, DELETE, requiere ser maestro autenticado
+            permission_classes = [IsAuthenticated, IsTeacher]
+        return [permission() for permission in permission_classes]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
