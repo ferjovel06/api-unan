@@ -59,10 +59,28 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
     account = AccountSerializer()
+    student_id = serializers.CharField(required=True, validators=[])
 
     class Meta:
         model = Student
         fields = '__all__'
+
+    def validate(self, data):
+        request = self.context.get("request")
+        print(f"Request: {request}")
+        if request and request.method == "POST":
+            # Para POST, se hace la validación normal.
+            # Ejemplo: Verificar si el correo ya existe.
+            if Student.objects.filter(student_id=data.get("student_id")).exists():
+                raise serializers.ValidationError({"student_id": "Ya existe un estudiante con este ID"})
+        elif request and request.method in ["PUT", "PATCH"]:
+            print("Validando PUT/PATCH")
+            # Para PUT/PATCH, si se envía un correo, se permite que sea el mismo.
+            if self.instance:
+                student_id_nuevo = data.get("student_id", self.instance.student_id)
+                if student_id_nuevo != self.instance.student_id:
+                    raise serializers.ValidationError({"student_id": "No puede cambiar el ID del estudiante"})
+        return data
 
     def create(self, validated_data):
         account_data = validated_data.pop('account')
@@ -71,13 +89,14 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         return student
 
     def update(self, instance, validated_data):
+        print("Ejecutando update de StudentSerializer")
         account_data = validated_data.pop('account')
         if account_data:
-            if 'email' in account_data:
-                instance.account.email = account_data['email']
-                instance.account.save()
-            else:
-                raise serializers.ValidationError('Solo se puede actualizar el correo electronico')
+            # Actualizamos la cuenta existente usando un serializer parcial
+            account_serializer = AccountSerializer(instance.account, data=account_data, partial=True)
+            account_serializer.is_valid(raise_exception=True)
+            account_serializer.save()
+            # Actualizamos los demás campos del docente
         return super().update(instance, validated_data)
 
 

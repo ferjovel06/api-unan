@@ -14,7 +14,11 @@ class IsStudent(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_student:
             if request.method == "PUT":
-                return obj == request.user and "email" in request.data
+                print("Verificando si el estudiante puede editar el perfil")
+                print(obj.account)
+                print(request.user)
+                print(obj.account == request.user)
+                return obj.account == request.user  # Solo puede editar su propio perfil
         return False
 
 
@@ -32,6 +36,8 @@ class IsTeacher(BasePermission):
         if request.user.is_teacher:
             if request.method == "PUT":
                 print("Verificando si el maestro puede editar el perfil")
+                print(obj.account)
+                print(request.user)
                 print(obj.account==request.user)
                 return obj.account == request.user  # Solo puede editar su propio perfil
         return False

@@ -11,3 +11,6 @@
 ```python manage.py runserver```
 5. Probar la API
 ```http://localhost:8000/api/```
+
+## Documentación de la API
+```http://127.0.0.1:8000/swagger/```
