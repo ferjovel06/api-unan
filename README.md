@@ -3,10 +3,10 @@
 ```git clone https://github.com/ferjovel06/api-unan.git```
 ```cd api-unan```
 2. Crear un entorno virtual
-```python -m venv env```
-#### En Windows
-```env\Scripts\activate```
-#### En Linux
+```python -m venv env``` \
+En Windows\
+```env\Scripts\activate``` \
+En Linux \
 ```source env/bin/activate```
 3. Instalar las dependencias
 ```pip install -r requirements.txt```
