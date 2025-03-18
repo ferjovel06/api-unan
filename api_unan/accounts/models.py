@@ -52,6 +52,8 @@ class Account(AbstractBaseUser):
     email = models.EmailField('Correo Electronico', max_length=100, unique=True)
     telephone = models.CharField('Telefono', max_length=15, null=True, blank=True)
     description = models.TextField('Descripcion', max_length=500, null=True, blank=True)
+    career = models.ForeignKey('Career', on_delete=models.DO_NOTHING, null=True, blank=True)
+    profile_picture = models.ImageField('Foto de Perfil', upload_to='profile_pictures/', null=True, blank=True)
 
     # Atributos de django
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -87,7 +89,6 @@ class Account(AbstractBaseUser):
 
 class Student(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='student_profile')
-    career = models.CharField('Carrera', max_length=50)
     year_in_course = models.IntegerField('Año en Curso', default=1)
     student_id = models.CharField('Carnet de Estudiante', max_length=50, unique=True)
 
@@ -107,8 +108,11 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='teacher_profile')
-    specialization = models.CharField('Especialidad', max_length=50)
     teacher_id = models.CharField('Carnet de Docente', max_length=50, unique=True)
+
+    # Atributos de maestros
+    is_researcher = models.BooleanField('Es Investigador', default=False)
+    is_mentor = models.BooleanField('Es Mentor', default=False)
 
     objects = models.Manager()
 
@@ -118,3 +122,23 @@ class Teacher(models.Model):
     def clean(self):
         if Student.objects.filter(account=self.account).exists():
             raise ValidationError('Este usuario ya esta registrado como estudiante')
+
+
+class KnowledgeArea(models.Model):
+    name = models.CharField('Nombre', max_length=50, unique=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.name
+
+
+class Career(models.Model):
+    name = models.CharField('Nombre', max_length=50, unique=True)
+    knowledge_area = models.ForeignKey(KnowledgeArea, on_delete=models.DO_NOTHING)
+    department = models.CharField('Departamento', max_length=50)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.name

@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import Group
 
-from .models import Account, Student, Teacher
-from .serializers import AccountSerializer, GroupSerializer, StudentSerializer, TeacherSerializer
+from .models import Account, Student, Teacher, Career, KnowledgeArea
+from .serializers import AccountSerializer, GroupSerializer, StudentSerializer, TeacherSerializer, CareerSerializer, KnowledgeAreaSerializer
 from .permissions import IsAdmin, IsTeacher, IsStudent
 
 from drf_yasg.utils import swagger_auto_schema
@@ -57,6 +57,24 @@ class TeacherViewSet(viewsets.ModelViewSet):
         else:  # Para POST, PUT, DELETE, requiere ser maestro autenticado
             permission_classes = [IsAuthenticated, IsTeacher | IsAdmin]
         return [permission() for permission in permission_classes]
+
+
+class CareerViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows careers to be viewed or edited.
+    """
+    queryset = Career.objects.all().order_by('name')
+    serializer_class = CareerSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class KnowledgeAreaViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows knowledge areas to be viewed or edited.
+    """
+    queryset = KnowledgeArea.objects.all().order_by('name')
+    serializer_class = KnowledgeAreaSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class GroupViewSet(viewsets.ModelViewSet):

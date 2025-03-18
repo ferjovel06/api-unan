@@ -1,9 +1,8 @@
 from django.contrib.auth.models import Group
-from django.template.context_processors import request
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import Account, Student, Teacher
+from .models import Account, Student, Teacher, Career, KnowledgeArea
 
 User = get_user_model()
 
@@ -142,6 +141,18 @@ class TeacherSerializer(serializers.HyperlinkedModelSerializer):
             account_serializer.save()
         # Actualizamos los demás campos del docente
         return super().update(instance, validated_data)
+
+
+class CareerSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Career
+        fields = ['url', 'name', 'knowledge_area', 'department']
+
+
+class KnowledgeAreaSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = KnowledgeArea
+        fields = ['url', 'name']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

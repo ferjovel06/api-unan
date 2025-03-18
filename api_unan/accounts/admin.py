@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Account, Student, Teacher
+from .models import Account, Student, Teacher, Career, KnowledgeArea
 
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'first_name', 'last_name', 'is_admin', 'is_active', 'is_superuser')
-    search_fields = ('email', 'username', 'first_name', 'last_name')
-    list_filter = ('is_admin', 'is_active', 'is_superuser')
+    list_display = ('email', 'username', 'first_name', 'last_name', 'career', 'is_admin', 'is_active', 'is_student', 'is_teacher')
+    search_fields = ('email', 'username', 'first_name', 'last_name', 'career')
+    list_filter = ('career', 'is_admin', 'is_active', 'is_superuser')
 
     def save_model(self, request, obj, form, change):
         if obj.password:
@@ -16,9 +16,9 @@ class AccountAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('account', 'career', 'year_in_course', 'student_id')
-    search_fields = ('account', 'career', 'year_in_course', 'student_id')
-    list_filter = ('account', 'career', 'year_in_course')
+    list_display = ('account', 'year_in_course', 'student_id')
+    search_fields = ('account', 'year_in_course', 'student_id')
+    list_filter = ('account', 'year_in_course')
     raw_id_fields = ['account']
 
     def save_model(self, request, obj, form, change):
@@ -35,9 +35,8 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('account', 'specialization', 'teacher_id')
-    search_fields = ('account', 'specialization', 'teacher_id')
-    list_filter = ('specialization',)
+    list_display = ('account', 'teacher_id')
+    search_fields = ('account', 'teacher_id')
     raw_id_fields = ['account']
 
     def save_model(self, request, obj, form, change):
@@ -50,3 +49,13 @@ class TeacherAdmin(admin.ModelAdmin):
 
         obj.account.save()
         super().save_model(request, obj, form, change)
+
+@admin.register(Career)
+class CareerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'knowledge_area', 'department')
+    search_fields = ('name', 'knowledge_area', 'department')
+
+@admin.register(KnowledgeArea)
+class KnowledgeAreaAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
